@@ -30,7 +30,7 @@ automations:
     if:
       - true
     run:
-      - action: add-comment@v1
+      - action: add-thread@v1
         args:
           comment: |
             Please mark whether you used Gen AI to assist coding in this PR
