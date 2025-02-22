@@ -7,7 +7,7 @@ on:
 automations:
   genai_label_present:
     if:
-      - {{ has.genai_label_present }}
+      - false
     run:
       - action: add-comment@v1
         args:
@@ -20,7 +20,7 @@ automations:
 
   genai_label_missing:
     if:
-      - {{ not has.genai_label_present }}
+      - false
     run:
       - action: add-comment@v1
         args:
