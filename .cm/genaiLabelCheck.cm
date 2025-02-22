@@ -12,12 +12,21 @@ automations:
       - action: add-comment@v1
         args:
           comment: |
-            This should only appear it the label is there
-
+            This should only appear it the label is not present
       - action: add-github-check@v1
         args:
           check_name: GenAI-check
           conclusion: action_required
-
+    if:
+      - {{ has.genai_label_present }}
+    run:
+      - action: add-comment@v1
+        args:
+          comment: |
+            This should only appear when the label has been added
+      - action: add-github-check@v1
+        args:
+          check_name: GenAI-check
+          conclusion: success
 has:
   genai_label_present: {{ pr.labels | match(regex=r/GenAI-.*/) | some }}
