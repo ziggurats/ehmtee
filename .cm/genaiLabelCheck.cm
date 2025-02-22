@@ -5,7 +5,7 @@ on:
   - pr_created
 
 automations:
-  genai_label_check:
+  genai_label_missing:
     if:
       - {{ not has.genai_label_present }}
     run:
@@ -17,6 +17,8 @@ automations:
         args:
           check_name: GenAI-check
           conclusion: action_required
+
+  genai_label_present:
     if:
       - {{ has.genai_label_present }}
     run:
@@ -28,5 +30,6 @@ automations:
         args:
           check_name: GenAI-check
           conclusion: success
+
 has:
   genai_label_present: {{ pr.labels | match(regex=r/GenAI-.*/) | some }}
