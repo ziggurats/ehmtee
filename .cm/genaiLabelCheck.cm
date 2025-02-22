@@ -5,19 +5,6 @@ on:
   - pr_created
 
 automations:
-  genai_label_missing:
-    if:
-      - {{ not has.genai_label_present }}
-    run:
-      - action: add-comment@v1
-        args:
-          comment: |
-            This should only appear it the label is not present
-      - action: add-github-check@v1
-        args:
-          check_name: GenAI-check
-          conclusion: action_required
-
   genai_label_present:
     if:
       - {{ has.genai_label_present }}
@@ -30,6 +17,19 @@ automations:
         args:
           check_name: GenAI-check
           conclusion: success
+
+  genai_label_missing:
+    if:
+      - {{ not has.genai_label_present }}
+    run:
+      - action: add-comment@v1
+        args:
+          comment: |
+            This should only appear it the label is not present
+      - action: add-github-check@v1
+        args:
+          check_name: GenAI-check
+          conclusion: action_required
 
 has:
   genai_label_present: {{ pr.labels | match(regex=r/GenAI-.*/) | some }}
