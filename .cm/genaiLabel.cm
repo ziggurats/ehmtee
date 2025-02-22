@@ -1,0 +1,81 @@
+# -*- mode: yaml -*-
+
+# +------------------------------ ----------------------------------------------+
+# | WARNING: This file controls repo automations, use caution when modifying   |
+# +----------------------------------------------------------------------------+
+# | This file contains one or more /:\ gitStream automations:                  |
+# | https:// docs.gitstream.cm                                                 |
+# |                                                                            |
+# | gitStream uses YAML syntax with nunjucks templating via Jinja 2.           |
+# |                                                                            |
+# | Automations follow an "if this, then that" execution format.               |
+# | More info here: https://docs.gitstream.cm/how-it-works/                    |
+# |                                                                            |
+# +----------------------------------------------------------------------------+
+
+# /:\ gitStream Reference Docs:
+#    Context Variables: https://docs.gitstream.cm/context-variables/
+#    Filter Functions: https://docs.gitstream.cm/filter-functions/
+#    Automation Actions: https://docs.gitstream.cm/automation-actions/
+
+manifest:
+  version: 1.0
+
+on:
+  - comment_added
+  - commit
+  - merge
+
+automations:
+  # This automation is used in conjunction with prompt_gen_ai.cm
+  label_copilot_pr:
+    # If the PR author has indicated that they used CoPilot to assist coding in this PR,
+    # apply a label indicating the PR was supported by CoPilot
+    if:
+      - {{ pr.comments | filter(attr='commenter', term='gitstream-cm') | filter (attr='content', regex=r/\- \[x\] CoPilot assisted/) | some}}
+    run:
+      - action: add-labels@v1
+        args:
+          labels: ['CoPilot', 'GenAI-assisted']
+
+  label_chatgpt_pr:
+    # If the PR author has indicated that they used ChatGPT to assist coding in this PR,
+    # apply a label indicating the PR was supported by ChatGPT
+    if:
+      - {{ pr.comments | filter(attr='commenter', term='gitstream-cm') | filter (attr='content', regex=r/\- \[x\] ChatGPT assisted/) | some}}
+    run:
+      - action: add-labels@v1
+        args:
+          labels: ['ChatGPT', 'GenAI-assisted']
+
+  label_gemini_pr:
+    # If the PR author has indicated that they used Gemini to assist coding in this PR,
+    # apply a label indicating the PR was supported by Gemini
+    if:
+      - {{ pr.comments | filter(attr='commenter', term='gitstream-cm') | filter (attr='content', regex=r/\- \[x\] Gemini assisted/) | some}}
+    run:
+      - action: add-labels@v1
+        args:
+          labels: ['Gemini', 'GenAI-assisted']
+
+  label_otherai_pr:
+    # If the PR author has indicated that they used 'Other AI' to assist coding in this PR,
+    # apply a label indicating the PR was supported by Other AI
+    if:
+      - {{ pr.comments | filter(attr='commenter', term='gitstream-cm') | filter (attr='content', regex=r/\- \[x\] Other AI assisted/) | some}}
+    run:
+      - action: add-labels@v1
+        args:
+          labels: ['OtherAI', 'GenAI-assisted']
+
+  label_no_ai_pr:
+    # If the PR author has indicated that they did not use Gen AI to assist coding in this PR,
+    # apply a label indicating the PR was done without Gen AI support
+    if:
+      - {{ pr.comments | filter(attr='commenter', term='gitstream-cm') | filter (attr='content', regex=r/\- \[x\] Did not use Gen AI/) | some}}
+    run:
+      - action: add-label@v1
+        args:
+          label: 'GenAI-not-used'
+
+
