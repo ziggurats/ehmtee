@@ -1,0 +1,23 @@
+manifest:
+  version: 1.0
+
+on:
+  - pr_created
+
+automations:
+  genai_label_check:
+    if:
+      - {{ not has.genai_label_present }}
+    run:
+      - action: add-comment@v1
+        args:
+          comment: |
+            This should only appear it the label is there
+
+      - action: add-github-check@v1
+        args:
+          check_name: GenAI-check
+          conclusion: action_required
+
+has:
+  genai_label_present: {{ pr.labels | match(regex=r/GenAI-.*/) | some }}
